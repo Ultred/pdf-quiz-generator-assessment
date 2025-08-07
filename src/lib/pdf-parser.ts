@@ -12,7 +12,7 @@ export async function parsePdf(file: File): Promise<{
       message: "parsePdf must be run in the browser.",
     };
   }
-
+  // Use a lower version of pdfjs-dist for compatibility since the latest version may not work with the current setup.
   const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
   const { GlobalWorkerOptions, getDocument } = pdfjsLib;
 
@@ -39,9 +39,12 @@ export async function parsePdf(file: File): Promise<{
       fullText += pageText + "\n";
     }
 
+    const keyPoints = extractKeyPoints(fullText);
+
     return {
       success: true,
       context: fullText,
+      keyPoints,
     };
   } catch (err) {
     console.error(err);
@@ -50,4 +53,26 @@ export async function parsePdf(file: File): Promise<{
       message: "Error parsing PDF",
     };
   }
+}
+
+// Simple key point extraction logic using local only getting Uppercase
+function extractKeyPoints(text: string): string[] {
+  const lines = text
+    .split(" ")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const keyPoints: string[] = [];
+
+  for (const line of lines) {
+    if (
+      line.match(/^(\d+[\.\)])\s+/) ||
+      (line.length > 0 && line === line.toUpperCase())
+    ) {
+      keyPoints.push(line);
+    }
+  }
+
+  // Optionally limit number of key points
+  return keyPoints.slice(0, 25);
 }
