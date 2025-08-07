@@ -2,7 +2,8 @@
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Confetti from 'react-confetti';
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
+import { useWindowSize } from 'react-use';
 import { parsePdf } from "@/lib/pdf-parser";
 import {
   Card,
@@ -26,7 +27,9 @@ export default function PdfUploader() {
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [score, setScore] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const { width, height } = useWindowSize();
 
+  
   const handleFileChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFile = e.target.files?.[0];
@@ -42,7 +45,7 @@ export default function PdfUploader() {
         setIsLoading(false);
 
         if (result.success) {
-          setParsedText(result.context || "");
+          setParsedText(result.keyPoints?.join(" ") || result.context ||"");
         } else {
           setError(result.message || "Failed to parse PDF.");
         }
@@ -61,7 +64,7 @@ export default function PdfUploader() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: "A webdeveloper sample" }),
+        body: JSON.stringify({ text: parsedText }),
       });
 
       const data = await response.json();
@@ -202,7 +205,7 @@ export default function PdfUploader() {
       <ToastContainer position="top-center" />
 
       {score !== null && score >= 3 && (
-        <Confetti />
+        <Confetti width={width} height={height} />
       )}
     </>
   );

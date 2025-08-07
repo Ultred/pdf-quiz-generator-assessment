@@ -55,24 +55,16 @@ export async function parsePdf(file: File): Promise<{
   }
 }
 
-// Simple key point extraction logic using local only getting Uppercase
+// Simple key point extraction logic using regular expressions
+// This can be improved with more sophisticated NLP techniques if needed.
 function extractKeyPoints(text: string): string[] {
-  const lines = text
-    .split(" ")
-    .map((line) => line.trim())
-    .filter(Boolean);
 
-  const keyPoints: string[] = [];
+   const sentences = text
+    .split(/(?<=[.?!])\s+(?=[A-Z])/)
+    .map(s => s.trim())
+    .filter(s => s.length > 20);
 
-  for (const line of lines) {
-    if (
-      line.match(/^(\d+[\.\)])\s+/) ||
-      (line.length > 0 && line === line.toUpperCase())
-    ) {
-      keyPoints.push(line);
-    }
-  }
-
-  // Optionally limit number of key points
-  return keyPoints.slice(0, 25);
+  return sentences.filter(s =>
+    /( is | are | means | refers to | defined as | caused by | due to )/i.test(s)
+  ).slice(0, 10);
 }
