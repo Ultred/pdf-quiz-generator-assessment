@@ -18,7 +18,7 @@ export default function PdfUploader() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [parsedText, setParsedText] = useState<string | null>(null);
-  //const [quiz, setQuiz] = useState<string | null>(null);
+  const [quiz, setQuiz] = useState<string | null>(null);
   const handleFileChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFile = e.target.files?.[0];
@@ -45,8 +45,33 @@ export default function PdfUploader() {
   );
 
   const handleGenerateClick = useCallback(async () => {
-   console.log("check")
-  }, []);
+    if (!parsedText) return;
+    setIsLoading(true);
+    setError(null);
+    setQuiz(null);
+    try {
+      const response = await fetch("/api/generate-quiz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: "Web developer in a simple day" }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setQuiz(data.quiz);
+      } else {
+        setError(data.error || "Failed to generate quiz.");
+      }
+    } catch (err) {
+      console.log(err);
+      setError("Network error while generating quiz.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [parsedText]);
 
   return (
     <Card>
