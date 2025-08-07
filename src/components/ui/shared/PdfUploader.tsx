@@ -3,7 +3,7 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Confetti from 'react-confetti';
 import React, { useCallback, useState } from "react";
-import { parsePdf } from "../../../lib/pdf-parser";
+import { parsePdf } from "@/lib/pdf-parser";
 import {
   Card,
   CardContent,
@@ -13,12 +13,9 @@ import {
 } from "../card";
 import { Input } from "../input";
 import { Button } from "../button";
+import { QuizItem } from "@/types/quiz";
 
-type QuizItem = {
-  question: string;
-  options: string[];
-  answer: string;
-};
+
 
 export default function PdfUploader() {
   const [file, setFile] = useState<File | null>(null);
