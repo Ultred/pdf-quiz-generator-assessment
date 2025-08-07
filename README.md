@@ -6,42 +6,52 @@ Create a simple web application that allows users to upload PDF documents and ge
 ## Tech Stack
 This starter project uses Next.js with Tailwind CSS and Shadcn UI components.
 
-## Core Requirements
+## How to install
 
-### Minimum Viable Product
-- Upload interface for PDF documents (limit to small files, <10 pages)
-- Generate 5 multiple-choice questions using OpenAI based on PDF content
-- Allow users to answer questions and see their score
+Clone the repository -> git clone
+Install dependencies -> npm install
+Run the development server -> npm run dev
 
-### Stretch Goals (if time permits)
-- Support for larger documents
-- Short-answer question types
-- Improved error handling
-- Enhanced visual design
+## Libraries Used
 
-## Implementation Guidelines
-- Focus on creating a working prototype rather than a polished product
-- Use the OpenAI API efficiently (consider extracting key sections rather than sending the entire document)
-- Basic error handling for common cases (invalid PDFs, API failures)
-- Keep the UI simple and functional
+Main Libraries:
+openai
+pdfjs-dist
 
-## Resources
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Shadcn UI Documentation](https://ui.shadcn.com)
-- [OpenAI API Documentation](https://platform.openai.com/docs/api-reference)
-- [PDF.js Library](https://mozilla.github.io/pdf.js/) (suggestion for PDF processing)
+For design purposes:
+react-confetti
+react-toastify
 
-## Evaluation Criteria
-- Functional completeness of the core features
-- Code organization and clarity
-- Thoughtful API integration
-- Basic user experience considerations
+## Approach & Design Decisions
 
-## Timeline
-- Expected completion: 2-3 hours of focused development
-- Deadline: Within 5 days of receiving this assignment
+Client-Side PDF Parsing:
+- Avoids sending large PDF files to the server, improving privacy and user experience.
+- Parsing is limited to 10 pages to prevent performance bottlenecks on large PDFs.
+- I used simple regular expressions to filter informative sentences containing phrases like “is”, “means”, or “refers to” as potential key points.
 
-This assignment is designed to demonstrate your approach to problem-solving and integration rather than creating a production-ready application. We're interested in seeing your programming style and how you tackle the essential requirements within the time constraint.
+PDF Upload & Preview Flow
 
-Good luck! We're excited to see your implementation.
+- Accept PDF files via an <input type="file"> field.
+- Show error messages if the file is invalid or parsing fails.
+- Enable a "Generate Quiz" button once parsing succeeds.
+
+Scoring & Feedback Logic
+- A success toast is shown for 3 or more correct answers.
+- A warning toast is shown for lower scores.
+
+API Logic & Design Explanation
+- Checks that the OpenAI API key is set.
+- Calls OpenAI's Chat API with a prompt to generate quiz questions.
+- Returns the generated quiz to the client in JSON format.
+
+
+## Limitations
+- When using Pdf-parser to pdf with picture it returns only /n
+- Only PDFs with 10 pages or less are supported.
+- Key point extraction can be improved using OpenAI.
+
+
+
+
+
+
